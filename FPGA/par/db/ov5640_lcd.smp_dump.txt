@@ -1,0 +1,105 @@
+
+State Machine - |ov5640_lcd|top:u_ch346_top|loop:m_loop|reg_nxt_state
+Name reg_nxt_state.ST_END reg_nxt_state.ST_DATA reg_nxt_state.ST_RD_DLY reg_nxt_state.ST_INDEX reg_nxt_state.ST_LEN reg_nxt_state.ST_OFFSET reg_nxt_state.ST_CMD reg_nxt_state.ST_IDLE 
+reg_nxt_state.ST_IDLE 0 0 0 0 0 0 0 0 
+reg_nxt_state.ST_CMD 0 0 0 0 0 0 1 1 
+reg_nxt_state.ST_OFFSET 0 0 0 0 0 1 0 1 
+reg_nxt_state.ST_LEN 0 0 0 0 1 0 0 1 
+reg_nxt_state.ST_INDEX 0 0 0 1 0 0 0 1 
+reg_nxt_state.ST_RD_DLY 0 0 1 0 0 0 0 1 
+reg_nxt_state.ST_DATA 0 1 0 0 0 0 0 1 
+reg_nxt_state.ST_END 1 0 0 0 0 0 0 1 
+
+State Machine - |ov5640_lcd|top:u_ch346_top|loop:m_loop|reg_cur_state
+Name reg_cur_state.ST_END reg_cur_state.ST_DATA reg_cur_state.ST_RD_DLY reg_cur_state.ST_INDEX reg_cur_state.ST_LEN reg_cur_state.ST_OFFSET reg_cur_state.ST_CMD reg_cur_state.ST_IDLE 
+reg_cur_state.ST_IDLE 0 0 0 0 0 0 0 0 
+reg_cur_state.ST_CMD 0 0 0 0 0 0 1 1 
+reg_cur_state.ST_OFFSET 0 0 0 0 0 1 0 1 
+reg_cur_state.ST_LEN 0 0 0 0 1 0 0 1 
+reg_cur_state.ST_INDEX 0 0 0 1 0 0 0 1 
+reg_cur_state.ST_RD_DLY 0 0 1 0 0 0 0 1 
+reg_cur_state.ST_DATA 0 1 0 0 0 0 0 1 
+reg_cur_state.ST_END 1 0 0 0 0 0 0 1 
+
+State Machine - |ov5640_lcd|top:u_ch346_top|recv:m_recv|reg_nxt_state
+Name reg_nxt_state.ST_END reg_nxt_state.ST_DATA reg_nxt_state.ST_RD_DLY reg_nxt_state.ST_INDEX reg_nxt_state.ST_LEN reg_nxt_state.ST_OFFSET reg_nxt_state.ST_CMD reg_nxt_state.ST_IDLE 
+reg_nxt_state.ST_IDLE 0 0 0 0 0 0 0 0 
+reg_nxt_state.ST_CMD 0 0 0 0 0 0 1 1 
+reg_nxt_state.ST_OFFSET 0 0 0 0 0 1 0 1 
+reg_nxt_state.ST_LEN 0 0 0 0 1 0 0 1 
+reg_nxt_state.ST_INDEX 0 0 0 1 0 0 0 1 
+reg_nxt_state.ST_RD_DLY 0 0 1 0 0 0 0 1 
+reg_nxt_state.ST_DATA 0 1 0 0 0 0 0 1 
+reg_nxt_state.ST_END 1 0 0 0 0 0 0 1 
+
+State Machine - |ov5640_lcd|top:u_ch346_top|recv:m_recv|reg_cur_state
+Name reg_cur_state.ST_END reg_cur_state.ST_DATA reg_cur_state.ST_RD_DLY reg_cur_state.ST_INDEX reg_cur_state.ST_LEN reg_cur_state.ST_OFFSET reg_cur_state.ST_CMD reg_cur_state.ST_IDLE 
+reg_cur_state.ST_IDLE 0 0 0 0 0 0 0 0 
+reg_cur_state.ST_CMD 0 0 0 0 0 0 1 1 
+reg_cur_state.ST_OFFSET 0 0 0 0 0 1 0 1 
+reg_cur_state.ST_LEN 0 0 0 0 1 0 0 1 
+reg_cur_state.ST_INDEX 0 0 0 1 0 0 0 1 
+reg_cur_state.ST_RD_DLY 0 0 1 0 0 0 0 1 
+reg_cur_state.ST_DATA 0 1 0 0 0 0 0 1 
+reg_cur_state.ST_END 1 0 0 0 0 0 0 1 
+
+State Machine - |ov5640_lcd|top:u_ch346_top|send:m_send|reg_nxt_state
+Name reg_nxt_state.ST_DATA reg_nxt_state.ST_HEAD reg_nxt_state.ST_INDEX reg_nxt_state.ST_WR_DLY reg_nxt_state.ST_LEN reg_nxt_state.ST_OFFSET reg_nxt_state.ST_CMD reg_nxt_state.ST_IDLE reg_nxt_state.ST_END 
+reg_nxt_state.ST_IDLE 0 0 0 0 0 0 0 0 0 
+reg_nxt_state.ST_CMD 0 0 0 0 0 0 1 1 0 
+reg_nxt_state.ST_OFFSET 0 0 0 0 0 1 0 1 0 
+reg_nxt_state.ST_LEN 0 0 0 0 1 0 0 1 0 
+reg_nxt_state.ST_WR_DLY 0 0 0 1 0 0 0 1 0 
+reg_nxt_state.ST_INDEX 0 0 1 0 0 0 0 1 0 
+reg_nxt_state.ST_HEAD 0 1 0 0 0 0 0 1 0 
+reg_nxt_state.ST_DATA 1 0 0 0 0 0 0 1 0 
+reg_nxt_state.ST_END 0 0 0 0 0 0 0 1 1 
+
+State Machine - |ov5640_lcd|top:u_ch346_top|send:m_send|reg_cur_state
+Name reg_cur_state.ST_DATA reg_cur_state.ST_HEAD reg_cur_state.ST_INDEX reg_cur_state.ST_WR_DLY reg_cur_state.ST_LEN reg_cur_state.ST_OFFSET reg_cur_state.ST_CMD reg_cur_state.ST_IDLE reg_cur_state.ST_END 
+reg_cur_state.ST_IDLE 0 0 0 0 0 0 0 0 0 
+reg_cur_state.ST_CMD 0 0 0 0 0 0 1 1 0 
+reg_cur_state.ST_OFFSET 0 0 0 0 0 1 0 1 0 
+reg_cur_state.ST_LEN 0 0 0 0 1 0 0 1 0 
+reg_cur_state.ST_WR_DLY 0 0 0 1 0 0 0 1 0 
+reg_cur_state.ST_INDEX 0 0 1 0 0 0 0 1 0 
+reg_cur_state.ST_HEAD 0 1 0 0 0 0 0 1 0 
+reg_cur_state.ST_DATA 1 0 0 0 0 0 0 1 0 
+reg_cur_state.ST_END 0 0 0 0 0 0 0 1 1 
+
+State Machine - |ov5640_lcd|top:u_ch346_top|rd_rst:m_rd_rst|reg_nxt_state
+Name reg_nxt_state.ST_END reg_nxt_state.ST_DATA reg_nxt_state.ST_RD_DLY reg_nxt_state.ST_LEN reg_nxt_state.ST_OFFSET reg_nxt_state.ST_CMD reg_nxt_state.ST_IDLE 
+reg_nxt_state.ST_IDLE 0 0 0 0 0 0 0 
+reg_nxt_state.ST_CMD 0 0 0 0 0 1 1 
+reg_nxt_state.ST_OFFSET 0 0 0 0 1 0 1 
+reg_nxt_state.ST_LEN 0 0 0 1 0 0 1 
+reg_nxt_state.ST_RD_DLY 0 0 1 0 0 0 1 
+reg_nxt_state.ST_DATA 0 1 0 0 0 0 1 
+reg_nxt_state.ST_END 1 0 0 0 0 0 1 
+
+State Machine - |ov5640_lcd|top:u_ch346_top|rd_rst:m_rd_rst|reg_cur_state
+Name reg_cur_state.ST_END reg_cur_state.ST_DATA reg_cur_state.ST_RD_DLY reg_cur_state.ST_LEN reg_cur_state.ST_OFFSET reg_cur_state.ST_CMD reg_cur_state.ST_IDLE 
+reg_cur_state.ST_IDLE 0 0 0 0 0 0 0 
+reg_cur_state.ST_CMD 0 0 0 0 0 1 1 
+reg_cur_state.ST_OFFSET 0 0 0 0 1 0 1 
+reg_cur_state.ST_LEN 0 0 0 1 0 0 1 
+reg_cur_state.ST_RD_DLY 0 0 1 0 0 0 1 
+reg_cur_state.ST_DATA 0 1 0 0 0 0 1 
+reg_cur_state.ST_END 1 0 0 0 0 0 1 
+
+State Machine - |ov5640_lcd|cmos_capture_data:u_cmos_capture_data|frame_state
+Name frame_state.IDLE frame_state.FRAME_OUTPUT frame_state.WAIT_VSYNC 
+frame_state.IDLE 0 0 0 
+frame_state.WAIT_VSYNC 1 0 1 
+frame_state.FRAME_OUTPUT 1 1 0 
+
+State Machine - |ov5640_lcd|i2c_dri:u_i2c_dr|cur_state
+Name cur_state.st_stop cur_state.st_data_rd cur_state.st_addr_rd cur_state.st_data_wr cur_state.st_addr8 cur_state.st_addr16 cur_state.st_sladdr cur_state.st_idle 
+cur_state.st_idle 0 0 0 0 0 0 0 0 
+cur_state.st_sladdr 0 0 0 0 0 0 1 1 
+cur_state.st_addr16 0 0 0 0 0 1 0 1 
+cur_state.st_addr8 0 0 0 0 1 0 0 1 
+cur_state.st_data_wr 0 0 0 1 0 0 0 1 
+cur_state.st_addr_rd 0 0 1 0 0 0 0 1 
+cur_state.st_data_rd 0 1 0 0 0 0 0 1 
+cur_state.st_stop 1 0 0 0 0 0 0 1 

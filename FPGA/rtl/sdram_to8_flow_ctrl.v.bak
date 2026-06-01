@@ -1,0 +1,85 @@
+module sdram_to8_flow_ctrl(
+    input             clk_100m,
+    input             rst_n,
+    
+    input      [12:0] to8_wrusedw,
+    input             sdram_rd_empty,
+    output reg        sdram_rd_en,
+    
+    input      [15:0] sdram_rd_data,
+    output reg        to8_wr_en,
+    output reg [15:0] to8_wr_data
+);
+
+parameter FIFO_LOW_THRESHOLD  = 13'd2000;
+parameter FIFO_HIGH_THRESHOLD = 13'd5500;
+parameter BURST_LENGTH        = 10'd512;
+
+reg [9:0] burst_cnt;
+reg flow_ctrl_enable;
+reg in_burst;
+reg sdram_rd_en_d1;
+
+wire to8_fifo_low = (to8_wrusedw < FIFO_LOW_THRESHOLD);
+wire to8_fifo_high = (to8_wrusedw >= FIFO_HIGH_THRESHOLD);
+wire burst_done = (burst_cnt == BURST_LENGTH - 1);
+
+always @(posedge clk_100m or negedge rst_n) begin
+    if(!rst_n) begin
+        flow_ctrl_enable <= 1'b0;
+        in_burst <= 1'b0;
+    end
+    else begin
+        if(to8_fifo_low && !in_burst && !sdram_rd_empty)
+            flow_ctrl_enable <= 1'b1;
+        else if(burst_done)
+            flow_ctrl_enable <= 1'b0;
+            
+        if(sdram_rd_en)
+            in_burst <= 1'b1;
+        else if(burst_done)
+            in_burst <= 1'b0;
+    end
+end
+
+always @(posedge clk_100m or negedge rst_n) begin
+    if(!rst_n) begin
+        burst_cnt <= 10'd0;
+        sdram_rd_en <= 1'b0;
+    end
+    else begin
+        if(flow_ctrl_enable && burst_cnt < BURST_LENGTH && !sdram_rd_empty) begin
+            sdram_rd_en <= 1'b1;
+            burst_cnt <= burst_cnt + 1'b1;
+        end
+        else begin
+            sdram_rd_en <= 1'b0;
+            if(burst_done)
+                burst_cnt <= 10'd0;
+        end
+    end
+end
+
+always @(posedge clk_100m or negedge rst_n) begin
+    if(!rst_n)
+        sdram_rd_en_d1 <= 1'b0;
+    else
+        sdram_rd_en_d1 <= sdram_rd_en;
+end
+
+always @(posedge clk_100m or negedge rst_n) begin
+    if(!rst_n) begin
+        to8_wr_en <= 1'b0;
+        to8_wr_data <= 16'd0;
+    end
+    else if(sdram_rd_en_d1) begin
+        to8_wr_en <= 1'b1;
+        to8_wr_data <= sdram_rd_data;
+    end
+    else begin
+        to8_wr_en <= 1'b0;
+        to8_wr_data <= to8_wr_data;
+    end
+end
+
+endmodule

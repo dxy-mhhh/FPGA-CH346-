@@ -1,0 +1,6 @@
+*
+!.gitignore
+!QT/
+!QT/**
+!FPGA/
+!FPGA/**

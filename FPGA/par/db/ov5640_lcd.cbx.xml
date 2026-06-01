@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<LOG_ROOT>
+	<PROJECT NAME="ov5640_lcd">
+		<CBX_INST_ENTRY INSTANCE_NAME="|ov5640_lcd|sdram_top:u_sdram_top|sdram_fifo_ctrl:u_sdram_fifo_ctrl|rdfifo:u_rdfifo|dcfifo:dcfifo_component" CBX_FILE_NAME="dcfifo_aol1.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|ov5640_lcd|sld_signaltap:auto_signaltap_0|sld_signaltap_impl:sld_signaltap_body|sld_signaltap_implb:sld_signaltap_body|altdpram:\stp_non_zero_ram_gen:attribute_mem_gen:attribute_mem|lpm_decode:wdecoder" CBX_FILE_NAME="decode_dvf.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|ov5640_lcd|sld_signaltap:auto_signaltap_0|sld_signaltap_impl:sld_signaltap_body|sld_signaltap_implb:sld_signaltap_body|sld_offload_buffer_mgr:\stp_non_zero_depth_offload_gen:stp_offload_buff_mgr_inst|LPM_COUNTER:status_read_pointer_counter" CBX_FILE_NAME="cntr_23j.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|ov5640_lcd|to8:u_to8|dcfifo_mixed_widths:dcfifo_mixed_widths_component" CBX_FILE_NAME="dcfifo_0bh1.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|ov5640_lcd|sld_signaltap:auto_signaltap_0|sld_signaltap_impl:sld_signaltap_body|sld_signaltap_implb:sld_signaltap_body|altdpram:\stp_non_zero_ram_gen:attribute_mem_gen:attribute_mem|lpm_mux:mux" CBX_FILE_NAME="mux_rsc.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|ov5640_lcd|sld_signaltap:auto_signaltap_0|sld_signaltap_impl:sld_signaltap_body|sld_signaltap_implb:sld_signaltap_body|sld_offload_buffer_mgr:\stp_non_zero_depth_offload_gen:stp_offload_buff_mgr_inst|LPM_COUNTER:\adv_point_3_and_more:advance_pointer_counter" CBX_FILE_NAME="cntr_pgi.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|ov5640_lcd|sld_signaltap:auto_signaltap_0|sld_signaltap_impl:sld_signaltap_body|sld_signaltap_implb:sld_signaltap_body|sld_offload_buffer_mgr:\stp_non_zero_depth_offload_gen:stp_offload_buff_mgr_inst|LPM_COUNTER:read_pointer_counter" CBX_FILE_NAME="cntr_g9j.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|ov5640_lcd|pll:u_pll|altpll:altpll_component" CBX_FILE_NAME="pll_altpll.v"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|ov5640_lcd|sdram_top:u_sdram_top|sdram_fifo_ctrl:u_sdram_fifo_ctrl|wrfifo:u_wrfifo|dcfifo:dcfifo_component" CBX_FILE_NAME="dcfifo_nnl1.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|ov5640_lcd|sld_signaltap:auto_signaltap_0|sld_signaltap_impl:sld_signaltap_body|sld_signaltap_implb:sld_signaltap_body|altsyncram:\stp_non_zero_ram_gen:stp_buffer_ram" CBX_FILE_NAME="altsyncram_d124.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|ov5640_lcd|sld_signaltap:auto_signaltap_0|sld_signaltap_impl:sld_signaltap_body|sld_signaltap_implb:sld_signaltap_body|sld_offload_buffer_mgr:\stp_non_zero_depth_offload_gen:stp_offload_buff_mgr_inst|LPM_COUNTER:status_advance_pointer_counter" CBX_FILE_NAME="cntr_fgi.tdf"/>
+	</PROJECT>
+</LOG_ROOT>

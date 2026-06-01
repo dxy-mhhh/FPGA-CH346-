@@ -1,0 +1,14 @@
+Analysis & Synthesis Status : Successful - Fri May 01 22:48:32 2026
+Quartus II 64-Bit Version : 13.0.1 Build 232 06/12/2013 SP 1 SJ Full Version
+Revision Name : ov5640_lcd
+Top-level Entity Name : ov5640_lcd
+Family : Cyclone IV E
+Total logic elements : 3,194
+    Total combinational functions : 2,282
+    Dedicated logic registers : 1,925
+Total registers : 1925
+Total pins : 100
+Total virtual pins : 0
+Total memory bits : 260,096
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 1
