@@ -1,0 +1,302 @@
+`timescale 1ns/1ps
+module top(
+    input               sys_clk     ,
+    input               rst_n       ,
+
+    //-- config
+//    input       [1:0]   data_len    , // 鎼寸喎绱    
+	 input       [1:0]   spd_sel     , // 閸掑洦宕查弮鍫曟寭闁喎瀹    
+	 input               loop_en     , // 瑜版挸绱戦崥顖涙閸忓牐顕癛D閺佺増宓侀懛纭哸m, 娑斿鎮楅崶鐐插晸WR閻╃鎮撻弫鐗堝祦; 閸忔娊妫撮弮鏈电矌閸愭┒R閻楃懓鐣鹃弽鐓庣础閺佺増宓    
+	 input       [7:0]   ext_data    , // 婢舵牠鍎存潏鎾冲弳閺佺増宓    
+    //-- flow control
+    input               rdne_n      , // rd not empty
+    input               wrnf_n      , // wr not full, priority: wrnf > rdne
+
+    //-- slave parallel interface
+    output              cs_n        ,
+    output              wr_n        ,
+    output              rd_n        ,
+    output              addr        ,
+    inout       [7:0]   data        ,
+    
+    output      [3 :0]  led,
+    output              wire_send_data_sent // 数据发送完成信号
+);
+
+//wire wire_clk_200m;
+//wire wire_clk_60m;
+//wire wire_clk_80m;
+
+//PLL1 m_pll (
+//    .clkout0    (wire_clk_200m      ),   
+//    .clkout1    (wire_clk_60m       ),   
+//    .clkin1     (sys_clk            ),
+//    .pll_lock   ( )
+//);
+
+//PLL1 m_pll(
+//    .areset             (rst_n),
+//    .inclk0             (sys_clk),
+//            
+//    .c0                 (wire_clk_200m),
+//    .c1                 (wire_clk_60m),
+//    .c2                 (wire_clk_80m),
+//    .locked             ()
+//    );
+
+//--
+reg reg_led_flag;
+reg [27:0] reg_clk_cnt;
+always @(posedge sys_clk or negedge rst_n) begin
+    if(~rst_n)
+        reg_clk_cnt <= 0;
+    else
+        reg_clk_cnt <= reg_clk_cnt + 1;
+end
+
+always @(posedge sys_clk or negedge rst_n) begin
+    if(~rst_n)
+        reg_led_flag <= 0;
+    else if(&reg_clk_cnt)
+        reg_led_flag <= ~reg_led_flag;
+end
+
+
+reg         reg_loop_en ;
+reg [1:0]   reg_data_len;
+reg [1:0]   reg_spd_sel ;
+reg         reg_rdne_n  ;
+reg         reg_wrnf_n  ;
+
+reg         reg_cs_n    ;
+reg         reg_wr_n    ;
+reg         reg_rd_n    ;
+reg         reg_addr    ;
+reg [7:0]   reg_data    ;
+reg [7:0]   reg_ext_data;
+
+always @(posedge sys_clk) begin
+    reg_loop_en  <= loop_en;
+    // reg_loop_en  <= 1'b1;
+//    reg_data_len <= data_len;
+	reg_data_len <= 2'd0	;
+    reg_spd_sel  <= spd_sel ;
+    //reg_spd_sel  <= 2'd0 	;
+    reg_rdne_n   <= rdne_n  ;
+    reg_wrnf_n   <= wrnf_n  ;
+    reg_ext_data <= ext_data;
+
+    reg_cs_n     <= cs_n    ;
+    reg_wr_n     <= wr_n    ;
+    reg_rd_n     <= rd_n    ;
+    reg_addr     <= addr    ;
+    reg_data     <= data    ;
+end
+
+//--
+wire wire_rdrst_busy;
+wire wire_send_busy;
+wire wire_recv_busy;
+wire wire_loop_busy;
+wire wire_busy;
+reg reg_slv_en;
+reg reg_send_en;
+reg reg_rdrst_en;
+
+assign wire_busy = wire_send_busy | wire_recv_busy | wire_loop_busy | wire_rdrst_busy;
+reg reg_delay_flag;
+
+wire wire_wrnf_neg;
+assign wire_wrnf_neg = reg_wrnf_n & ~wrnf_n;
+
+wire wire_rdrst_module_en;
+wire wire_send_module_en;
+wire wire_recv_module_en;
+wire wire_loop_module_en;
+
+assign wire_rdrst_module_en = reg_slv_en & ~reg_rdrst_en;
+assign wire_send_module_en = reg_rdrst_en & reg_slv_en & reg_send_en & ~reg_loop_en;
+assign wire_recv_module_en = reg_rdrst_en & reg_slv_en & ~reg_send_en & ~reg_loop_en;
+assign wire_loop_module_en = reg_rdrst_en & reg_slv_en & reg_loop_en;
+
+wire wire_slv_state_ready;
+wire wire_slv_rdrst_retry;
+reg [7:0] reg_retry_cnt;
+
+always @(posedge sys_clk or negedge rst_n) begin
+// always @(posedge wire_clk_60m or negedge rst_n) begin
+    if(~rst_n)
+        reg_delay_flag <= 0;
+    else if(&reg_clk_cnt)
+        reg_delay_flag <= 1;
+end
+ 
+always @(posedge sys_clk or negedge rst_n) begin
+    if(~rst_n)
+        reg_slv_en <= 0;
+    else if((~reg_rdne_n | (~reg_wrnf_n)) & ~wire_busy & reg_delay_flag)
+        reg_slv_en <= 1; 
+    else
+        reg_slv_en <= 0;
+end
+
+always @(posedge sys_clk or negedge rst_n) begin
+    if(~rst_n)
+        reg_send_en <= 0;
+    else if(~wire_busy & ~reg_slv_en) begin
+        if(~reg_rdne_n)
+            reg_send_en <= 0; 
+        else 
+            reg_send_en <= 1; 
+    end
+end
+
+always @(posedge sys_clk or negedge rst_n) begin
+    if(~rst_n)
+        reg_retry_cnt <= 8'd0;
+    else if(wire_slv_rdrst_retry) begin
+		reg_retry_cnt <= reg_retry_cnt + 1'b1; 
+    end
+end
+
+always @(posedge sys_clk or negedge rst_n) begin
+    if(~rst_n)
+        reg_rdrst_en <= 0;
+    else if(wire_slv_state_ready & reg_retry_cnt != 0) begin
+		reg_rdrst_en <= 1; 
+    end
+end
+
+//--
+wire        wire_rdrst_cs_n;
+wire        wire_rdrst_addr;
+wire        wire_rdrst_wr_n;
+wire        wire_rdrst_rd_n;
+wire [7:0]  wire_rdrst_data_i;
+wire [7:0]  wire_rdrst_data_o;
+wire        wire_rdrst_data_oe;
+
+wire        wire_send_cs_n;
+wire        wire_send_addr;
+wire        wire_send_wr_n;
+wire        wire_send_rd_n;
+wire [7:0]  wire_send_data;
+
+wire        wire_recv_cs_n;
+wire        wire_recv_addr;
+wire        wire_recv_wr_n;
+wire        wire_recv_rd_n;
+wire [7:0]  wire_recv_data_i;
+wire [7:0]  wire_recv_data_o;
+wire        wire_recv_data_oe;
+
+wire        wire_loop_cs_n;
+wire        wire_loop_addr;
+wire        wire_loop_wr_n;
+wire        wire_loop_rd_n;
+wire [7:0]  wire_loop_data_i;
+wire [7:0]  wire_loop_data_o;
+wire        wire_loop_data_oe;
+
+wire wire_recv_data_err;
+wire wire_recv_index_err;
+
+rd_rst m_rd_rst(
+    .wire_clk            (sys_clk          ),
+    .wire_rstn           (rst_n                 ),
+
+    .wire_module_en      (wire_rdrst_module_en	),
+    .wire_len_sel        (reg_data_len          ),
+    .wire_speed_sel      (reg_spd_sel           ),
+
+    .wire_cs_n           (wire_rdrst_cs_n     	),
+    .wire_addr           (wire_rdrst_addr     	),
+    .wire_wr_n           (wire_rdrst_wr_n     	),
+    .wire_rd_n           (wire_rdrst_rd_n     	),
+    .wire_data_i         (wire_rdrst_data_i   	),
+    .wire_data_o         (wire_rdrst_data_o   	),
+    .wire_data_oe        (wire_rdrst_data_oe  	),
+    .wire_slv_state_ready(wire_slv_state_ready 	),
+    .wire_slv_rdrst_retry(wire_slv_rdrst_retry 	),
+    .wire_busy           (wire_rdrst_busy      	)
+);
+
+send m_send(
+    .wire_clk        (sys_clk          ),
+    .wire_rstn       (rst_n                 ),
+
+    .wire_module_en  (wire_send_module_en   ),
+    .wire_len_sel    (reg_data_len          ),
+    .wire_speed_sel  (reg_spd_sel           ),
+    .wire_ext_data   (reg_ext_data          ),
+
+    .wire_cs_n       (wire_send_cs_n        ),
+    .wire_addr       (wire_send_addr        ),
+    .wire_wr_n       (wire_send_wr_n        ),
+    .wire_rd_n       (wire_send_rd_n        ),
+    .wire_data       (wire_send_data        ),
+    .wire_data_sent  (wire_send_data_sent   ),
+
+    .wire_busy       (wire_send_busy        )
+);
+
+recv m_recv(
+    .wire_clk            (sys_clk          ),
+    .wire_rstn           (rst_n                 ),
+
+    .wire_module_en      (wire_recv_module_en	),
+    .wire_len_sel        (reg_data_len          ),
+    .wire_speed_sel      (reg_spd_sel           ),
+
+    .wire_cs_n           (wire_recv_cs_n        ),
+    .wire_addr           (wire_recv_addr        ),
+    .wire_wr_n           (wire_recv_wr_n        ),
+    .wire_rd_n           (wire_recv_rd_n        ),
+    .wire_data_i         (wire_recv_data_i      ),
+    .wire_data_o         (wire_recv_data_o      ),
+    .wire_data_oe        (wire_recv_data_oe     ),
+    .wire_err_flag_data  (wire_recv_data_err    ),
+    .wire_err_flag_index (wire_recv_index_err   ),
+
+    .wire_busy           (wire_recv_busy        )
+);
+
+loop m_loop(
+    .wire_clk            (sys_clk          ),
+    .wire_rstn           (rst_n                 ),
+
+    .wire_module_en      (wire_loop_module_en   ),
+    .wire_len_sel        (reg_data_len          ),
+    .wire_speed_sel      (reg_spd_sel           ),
+
+    .wire_cs_n           (wire_loop_cs_n        ),
+    .wire_addr           (wire_loop_addr        ),
+    .wire_wr_n           (wire_loop_wr_n        ),
+    .wire_rd_n           (wire_loop_rd_n        ),
+    .wire_data_i         (wire_loop_data_i      ),
+    .wire_data_o         (wire_loop_data_o      ),
+    .wire_data_oe        (wire_loop_data_oe     ),
+
+    .wire_busy           (wire_loop_busy        ),
+    .wire_loop_en        (reg_loop_en           ),
+    .wire_rdne_n         (reg_rdne_n            ),
+    .wire_wrnf_n         (reg_wrnf_n            )
+);
+
+assign led[0] = reg_led_flag | &wire_loop_data_i;
+assign led[1] = wire_busy ? 1'b0 : 1'b1;
+assign led[2] = reg_loop_en ? reg_led_flag  : reg_led_flag | wire_recv_data_err;
+assign led[3] = reg_loop_en ? ~reg_led_flag : reg_led_flag | wire_recv_index_err;
+
+assign cs_n = wire_rdrst_busy ? wire_rdrst_cs_n : wire_loop_busy ? wire_loop_cs_n : wire_send_busy ? wire_send_cs_n : wire_recv_cs_n ;
+assign addr = wire_rdrst_busy ? wire_rdrst_addr : wire_loop_busy ? wire_loop_addr : wire_send_busy ? wire_send_addr : wire_recv_addr ;
+assign wr_n = wire_rdrst_busy ? wire_rdrst_wr_n : wire_loop_busy ? wire_loop_wr_n : wire_send_busy ? wire_send_wr_n : wire_recv_wr_n ;
+assign rd_n = wire_rdrst_busy ? wire_rdrst_rd_n : wire_loop_busy ? wire_loop_rd_n : wire_send_busy ? wire_send_rd_n : wire_recv_rd_n ;
+assign data = wire_rdrst_busy ? (wire_rdrst_data_oe ? wire_rdrst_data_o : 8'hz) : wire_loop_busy ? (wire_loop_data_oe ? wire_loop_data_o : 8'hz) : wire_send_busy ? wire_send_data : (wire_recv_data_oe ? wire_recv_data_o : 8'hz);
+
+assign wire_rdrst_data_i = data;
+assign wire_recv_data_i = data;
+assign wire_loop_data_i = data;
+
+
+endmodule
